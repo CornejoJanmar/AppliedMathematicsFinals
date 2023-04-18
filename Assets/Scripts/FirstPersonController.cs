@@ -64,6 +64,8 @@ public class FirstPersonController : MonoBehaviour
     [SerializeField] private float walkBobAmount = 0.05f;
     [SerializeField] private float SprintBobSpeed = 18f;
     [SerializeField] private float SprintBobAmount = 0.11f;
+    [SerializeField] private float crouchBobSpeed = 7f;
+    [SerializeField] private float crouchBobAmount = 0.02f;
     private float defaultYPos = 0;
     private float timer = 20;
 
@@ -167,10 +169,10 @@ public class FirstPersonController : MonoBehaviour
 
         if (Mathf.Abs(MoveDir.x) > 0.1f || Mathf.Abs(MoveDir.z) > 0.1f)
         {
-            timer += Time.deltaTime * (IsSprinting ? SprintBobSpeed : walkBobSpeed);
+            timer += Time.deltaTime * (IsSprinting ? SprintBobSpeed : isCrouching ? crouchBobSpeed : walkBobSpeed);
             playerCamera.transform.localPosition = new Vector3(
                 playerCamera.transform.localPosition.x,
-                defaultYPos + Mathf.Sin(timer)* (IsSprinting ? SprintBobAmount : walkBobAmount),
+                defaultYPos + Mathf.Sin(timer)* (IsSprinting ? SprintBobAmount : isCrouching ? crouchBobAmount : walkBobAmount),
                 playerCamera.transform.localPosition.z);
         }
     }
