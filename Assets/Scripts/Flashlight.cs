@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class Flashlight : MonoBehaviour
 {
     [SerializeField] GameObject flashlightLight;
     private bool LightIsOn = false;
+
     void Start()
     {
         flashlightLight.gameObject.SetActive(false);
