@@ -16,10 +16,10 @@ MonoBehaviour:
   - {fileID: 2100000, guid: c22777d6e868e4f2fb421913386b154e, type: 2}
   - {fileID: 2100000, guid: 46e4d7968eb26a947afc32583679877a, type: 2}
   - {fileID: 2100000, guid: f218efcd794dbdc4ea8d0796dd69168f, type: 2}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 2100000, guid: e7e8e29005d4e7f42a03d236f4b8ee6b, type: 2}
+  - {fileID: 2100000, guid: 0fc0917fc86ea1b468108f56efc542a7, type: 2}
+  - {fileID: 2100000, guid: 0fc0917fc86ea1b468108f56efc542a7, type: 2}
+  - {fileID: 2100000, guid: 890ace48c44990c41b2056ebefd3f2b0, type: 2}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
