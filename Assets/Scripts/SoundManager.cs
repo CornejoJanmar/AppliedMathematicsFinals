@@ -32,16 +32,6 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    /*void Start() for playing theme song.
-    {
-        Play("Theme");
-    }
-
-
-    //FindObjectOfType<SoundManager>().Play("FallingVent"); for playing sound that you want. */
-
-
-
     public void Play (string name)
     {
         Sound s = Array.Find(sounds, sound => sound.name == name); 
