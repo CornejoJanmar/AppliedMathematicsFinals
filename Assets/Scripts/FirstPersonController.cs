@@ -17,6 +17,7 @@ public class FirstPersonController : MonoBehaviour
     [SerializeField] private bool canJump = true;
     [SerializeField] private bool canCrouch = true;
     [SerializeField] private bool canHeadBob = true;
+    [SerializeField] private bool canInteract = true;
     [SerializeField] private bool useFootsteps = true;
     [SerializeField] private bool useStamina = true;
 
@@ -24,6 +25,7 @@ public class FirstPersonController : MonoBehaviour
     [SerializeField] private KeyCode sprintKey = KeyCode.LeftShift;
     [SerializeField] private KeyCode jumpKey = KeyCode.Space;
     [SerializeField] private KeyCode crouchKey = KeyCode.C;
+    [SerializeField] private KeyCode interactKey = KeyCode.Mouse0;
 
     [Header("Movement Parameters")]
     [SerializeField] private float WalkSpeed = 3.0f;
@@ -77,6 +79,12 @@ public class FirstPersonController : MonoBehaviour
     private float footstepTimer = 0;
     private float GetCurrentOffset => IsSprinting ? baseStepSpeed * SprintStepMultiplier : baseStepSpeed;
 
+    [Header("Interaction")]
+    [SerializeField] private Vector3 interactionRayPoint = default;
+    [SerializeField] private float interactionDistance = default;
+    [SerializeField] private LayerMask interactionLayer = default;
+    private Interactable currentInteractable;
+
     private Camera playerCamera;
     private CharacterController CharacCtrl;
 
@@ -86,7 +94,8 @@ public class FirstPersonController : MonoBehaviour
     private float rotationX = 0;
 
 
-    void Start()
+
+    void Awake()
     {
         playerCamera = GetComponentInChildren<Camera>();
         CharacCtrl = GetComponent<CharacterController>();
@@ -120,6 +129,11 @@ public class FirstPersonController : MonoBehaviour
             if (useStamina)
                 HandleStamina();
 
+            if (canInteract)
+            {
+                HandleInteractionCheck();
+                HandleInteractionInput();
+            }
 
         }
     }
@@ -226,6 +240,34 @@ public class FirstPersonController : MonoBehaviour
             footstepTimer = GetCurrentOffset;
         }
     }
+
+    private void HandleInteractionCheck()
+    {
+        if(Physics.Raycast(playerCamera.ViewportPointToRay(interactionRayPoint),out RaycastHit hit, interactionDistance))
+        {
+            if(hit.collider.gameObject.layer == 6 && (currentInteractable == null || hit.collider.gameObject.GetInstanceID() != currentInteractable.GetInstanceID()))
+            {
+                hit.collider.TryGetComponent(out currentInteractable);
+
+                if (currentInteractable)
+                    currentInteractable.OnFocus();
+            }
+        }
+        else if (currentInteractable)
+        {
+            currentInteractable.OnLoseFocus();
+            currentInteractable = null;
+        }
+    }
+
+    private void HandleInteractionInput()
+    {
+        if (Input.GetKeyDown(interactKey) && currentInteractable != null && Physics.Raycast(playerCamera.ViewportPointToRay(interactionRayPoint), out RaycastHit hit, interactionDistance, interactionLayer))
+        {
+            currentInteractable.OnInteract();
+        }
+    }
+
 
     private void ApplyMovement()
     {
