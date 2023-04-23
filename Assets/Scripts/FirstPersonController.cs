@@ -73,11 +73,14 @@ public class FirstPersonController : MonoBehaviour
 
     [Header("Footstep Parameters")]
     [SerializeField] private float baseStepSpeed = 0.1f;
+    [SerializeField] private float crouchStepMultiplier = 1.5f;
     [SerializeField] private float SprintStepMultiplier = 0.5f;
     [SerializeField] private AudioSource footstepAudioSource = default;
-    [SerializeField] private AudioClip[] WalkClips = default;
+    [SerializeField] private AudioClip[] woodClips = default;
+    [SerializeField] private AudioClip[] stoneClips = default;
+    [SerializeField] private AudioClip[] tileClips = default;
     private float footstepTimer = 0;
-    private float GetCurrentOffset => IsSprinting ? baseStepSpeed * SprintStepMultiplier : baseStepSpeed;
+    private float GetCurrentOffset => isCrouching ? baseStepSpeed * crouchStepMultiplier : IsSprinting ? baseStepSpeed * SprintStepMultiplier : baseStepSpeed;
 
     [Header("Interaction")]
     [SerializeField] private Vector3 interactionRayPoint = default;
@@ -231,8 +234,16 @@ public class FirstPersonController : MonoBehaviour
             {
                 switch (hit.collider.tag)
                 {
+                    case "Footstep/WOOD":
+                        footstepAudioSource.PlayOneShot(woodClips[Random.Range(0, woodClips.Length - 1)]);
+                        break;
+                    case "Footstep/STONE":
+                        footstepAudioSource.PlayOneShot(stoneClips[Random.Range(0, stoneClips.Length - 1)]);
+                        break;
+                    case "Footstep/TILE":
+                        footstepAudioSource.PlayOneShot(tileClips[Random.Range(0, tileClips.Length - 1)]);
+                        break;
                     default:
-                        footstepAudioSource.PlayOneShot(WalkClips[Random.Range(0, WalkClips.Length - 1)]);
                         break;
                 }
             }
