@@ -15,7 +15,7 @@ public class BasicDoor : Interactable
 
     public override void OnFocus()
     {
-        
+
     }
 
     public override void OnInteract()
@@ -30,6 +30,11 @@ public class BasicDoor : Interactable
             FindObjectOfType<SoundManager>().Play("Door");
             anim.SetFloat("dot", dot);
             anim.SetBool("isOpen", isOpen);
+        }
+        else if (!canBeInteracted)
+        {
+            //UI show "Door is Locked"
+            //UI show "There must be a key somewhere"
         }
     }
 
