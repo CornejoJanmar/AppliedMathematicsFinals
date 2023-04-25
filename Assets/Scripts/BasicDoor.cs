@@ -6,6 +6,7 @@ public class BasicDoor : Interactable
 {
     [SerializeField] private bool isOpen = false;
     [SerializeField] public bool canBeInteracted = false;
+    [SerializeField] private GameObject UIpanel;
     private Animator anim;
 
     private void Start()
@@ -34,8 +35,7 @@ public class BasicDoor : Interactable
         else if (!canBeInteracted)
         {
             Debug.Log("Door is locked");
-            //UI show "Door is Locked"
-            //UI show "There must be a key somewhere"
+            UIpanel.SetActive(true);
         }
     }
 

@@ -8,6 +8,7 @@ public class MeatEvent : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        FindObjectOfType<SoundManager>().Play("PullEvent");
         anim.SetBool("IsTriggered", true);
     }
 }
