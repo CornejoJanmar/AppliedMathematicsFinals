@@ -5,7 +5,7 @@ using UnityEngine;
 public class BasicDoor : Interactable
 {
     [SerializeField] private bool isOpen = false;
-    [SerializeField] private bool canBeInteracted = false;
+    [SerializeField] public bool canBeInteracted = false;
     private Animator anim;
 
     private void Start()
@@ -33,6 +33,7 @@ public class BasicDoor : Interactable
         }
         else if (!canBeInteracted)
         {
+            Debug.Log("Door is locked");
             //UI show "Door is Locked"
             //UI show "There must be a key somewhere"
         }

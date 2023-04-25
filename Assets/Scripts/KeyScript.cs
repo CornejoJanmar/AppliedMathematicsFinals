@@ -2,16 +2,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class KeyScript : MonoBehaviour
+public class KeyScript : Interactable
 {
-    // Start is called before the first frame update
-    void Start()
+
+    [SerializeField] GameObject DoorUnlocks;
+
+    public override void OnFocus()
     {
         
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void OnInteract()
+    {
+        DoorUnlocks.GetComponent<BasicDoor>().canBeInteracted = true;
+        gameObject.SetActive(false);
+    }
+
+    public override void OnLoseFocus()
     {
         
     }

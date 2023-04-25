@@ -188,10 +188,10 @@ public class FirstPersonController : MonoBehaviour
 
         if (Mathf.Abs(MoveDir.x) > 0.1f || Mathf.Abs(MoveDir.z) > 0.1f)
         {
-            timer += Time.deltaTime * (IsSprinting ? SprintBobSpeed : isCrouching ? crouchBobSpeed : walkBobSpeed);
+            timer += Time.deltaTime * (isCrouching ? crouchBobSpeed : IsSprinting ? SprintBobSpeed : walkBobSpeed);
             playerCamera.transform.localPosition = new Vector3(
                 playerCamera.transform.localPosition.x,
-                defaultYPos + Mathf.Sin(timer)* (IsSprinting ? SprintBobAmount : isCrouching ? crouchBobAmount : walkBobAmount),
+                defaultYPos + Mathf.Sin(timer)* (isCrouching ? crouchBobAmount : IsSprinting ? SprintBobAmount : walkBobAmount),
                 playerCamera.transform.localPosition.z);
         }
     }
