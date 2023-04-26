@@ -9,7 +9,7 @@ public class BasementEvent : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         FindObjectOfType<SoundManager>().Play("BasementEvent");
-        light.GetComponent<Light>().color = new Color(0f, 1f, 1f, 0f);
+        light.GetComponent<Light>().color = new Color(0f, 1f, 1f, 0f);  //changes color to green
         gameObject.SetActive(false);
     }
 }
