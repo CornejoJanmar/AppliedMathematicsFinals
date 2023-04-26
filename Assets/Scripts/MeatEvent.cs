@@ -10,5 +10,6 @@ public class MeatEvent : MonoBehaviour
     {
         FindObjectOfType<SoundManager>().Play("PullEvent");
         anim.SetBool("IsTriggered", true);
+        gameObject.SetActive(false);
     }
 }
