@@ -17,6 +17,7 @@ public class FirstPersonController : MonoBehaviour
     [SerializeField] private bool canJump = true;
     [SerializeField] private bool canCrouch = true;
     [SerializeField] private bool canHeadBob = true;
+    [SerializeField] private bool canInteract = true;
     [SerializeField] private bool useFootsteps = true;
     [SerializeField] private bool useStamina = true;
 
@@ -24,6 +25,7 @@ public class FirstPersonController : MonoBehaviour
     [SerializeField] private KeyCode sprintKey = KeyCode.LeftShift;
     [SerializeField] private KeyCode jumpKey = KeyCode.Space;
     [SerializeField] private KeyCode crouchKey = KeyCode.C;
+    [SerializeField] private KeyCode interactKey = KeyCode.Mouse0;
 
     [Header("Movement Parameters")]
     [SerializeField] private float WalkSpeed = 3.0f;
@@ -71,11 +73,20 @@ public class FirstPersonController : MonoBehaviour
 
     [Header("Footstep Parameters")]
     [SerializeField] private float baseStepSpeed = 0.1f;
+    [SerializeField] private float crouchStepMultiplier = 1.5f;
     [SerializeField] private float SprintStepMultiplier = 0.5f;
     [SerializeField] private AudioSource footstepAudioSource = default;
-    [SerializeField] private AudioClip[] WalkClips = default;
+    [SerializeField] private AudioClip[] woodClips = default;
+    [SerializeField] private AudioClip[] stoneClips = default;
+    [SerializeField] private AudioClip[] tileClips = default;
     private float footstepTimer = 0;
-    private float GetCurrentOffset => IsSprinting ? baseStepSpeed * SprintStepMultiplier : baseStepSpeed;
+    private float GetCurrentOffset => isCrouching ? baseStepSpeed * crouchStepMultiplier : IsSprinting ? baseStepSpeed * SprintStepMultiplier : baseStepSpeed;
+
+    [Header("Interaction")]
+    [SerializeField] private Vector3 interactionRayPoint = default;
+    [SerializeField] private float interactionDistance = default;
+    [SerializeField] private LayerMask interactionLayer = default;
+    private Interactable currentInteractable;
 
     private Camera playerCamera;
     private CharacterController CharacCtrl;
@@ -85,9 +96,12 @@ public class FirstPersonController : MonoBehaviour
 
     private float rotationX = 0;
 
+    public static FirstPersonController instance;
 
-    void Start()
+    void Awake()
     {
+        instance = this;
+
         playerCamera = GetComponentInChildren<Camera>();
         CharacCtrl = GetComponent<CharacterController>();
         defaultYPos = playerCamera.transform.localPosition.y;
@@ -120,6 +134,11 @@ public class FirstPersonController : MonoBehaviour
             if (useStamina)
                 HandleStamina();
 
+            if (canInteract)
+            {
+                HandleInteractionCheck();
+                HandleInteractionInput();
+            }
 
         }
     }
@@ -169,10 +188,10 @@ public class FirstPersonController : MonoBehaviour
 
         if (Mathf.Abs(MoveDir.x) > 0.1f || Mathf.Abs(MoveDir.z) > 0.1f)
         {
-            timer += Time.deltaTime * (IsSprinting ? SprintBobSpeed : isCrouching ? crouchBobSpeed : walkBobSpeed);
+            timer += Time.deltaTime * (isCrouching ? crouchBobSpeed : IsSprinting ? SprintBobSpeed : walkBobSpeed);
             playerCamera.transform.localPosition = new Vector3(
                 playerCamera.transform.localPosition.x,
-                defaultYPos + Mathf.Sin(timer)* (IsSprinting ? SprintBobAmount : isCrouching ? crouchBobAmount : walkBobAmount),
+                defaultYPos + Mathf.Sin(timer)* (isCrouching ? crouchBobAmount : IsSprinting ? SprintBobAmount : walkBobAmount),
                 playerCamera.transform.localPosition.z);
         }
     }
@@ -217,8 +236,16 @@ public class FirstPersonController : MonoBehaviour
             {
                 switch (hit.collider.tag)
                 {
+                    case "Footstep/WOOD":
+                        footstepAudioSource.PlayOneShot(woodClips[Random.Range(0, woodClips.Length - 1)]);
+                        break;
+                    case "Footstep/STONE":
+                        footstepAudioSource.PlayOneShot(stoneClips[Random.Range(0, stoneClips.Length - 1)]);
+                        break;
+                    case "Footstep/TILE":
+                        footstepAudioSource.PlayOneShot(tileClips[Random.Range(0, tileClips.Length - 1)]);
+                        break;
                     default:
-                        footstepAudioSource.PlayOneShot(WalkClips[Random.Range(0, WalkClips.Length - 1)]);
                         break;
                 }
             }
@@ -226,6 +253,34 @@ public class FirstPersonController : MonoBehaviour
             footstepTimer = GetCurrentOffset;
         }
     }
+
+    private void HandleInteractionCheck()
+    {
+        if(Physics.Raycast(playerCamera.ViewportPointToRay(interactionRayPoint),out RaycastHit hit, interactionDistance))
+        {
+            if(hit.collider.gameObject.layer == 6 && (currentInteractable == null || hit.collider.gameObject.GetInstanceID() != currentInteractable.GetInstanceID()))
+            {
+                hit.collider.TryGetComponent(out currentInteractable);
+
+                if (currentInteractable)
+                    currentInteractable.OnFocus();
+            }
+        }
+        else if (currentInteractable)
+        {
+            currentInteractable.OnLoseFocus();
+            currentInteractable = null;
+        }
+    }
+
+    private void HandleInteractionInput()
+    {
+        if (Input.GetKeyDown(interactKey) && currentInteractable != null && Physics.Raycast(playerCamera.ViewportPointToRay(interactionRayPoint), out RaycastHit hit, interactionDistance, interactionLayer))
+        {
+            currentInteractable.OnInteract();
+        }
+    }
+
 
     private void ApplyMovement()
     {
