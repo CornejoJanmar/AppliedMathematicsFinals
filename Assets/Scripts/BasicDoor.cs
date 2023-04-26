@@ -8,6 +8,8 @@ public class BasicDoor : Interactable
     [SerializeField] public bool canBeInteracted = false;
     [SerializeField] private GameObject UIpanel;
     private Animator anim;
+    [SerializeField] InventoryManager.AllItems itemRequired;
+
 
     private void Start()
     {
@@ -34,8 +36,26 @@ public class BasicDoor : Interactable
         }
         else if (!canBeInteracted)
         {
-            Debug.Log("Door is locked");
-            UIpanel.SetActive(true);
+            if (HasRequiredItem(itemRequired))
+            {
+                canBeInteracted = true;
+            }
+            else
+            {
+                UIpanel.SetActive(true);
+            }
+        }
+    }
+
+    public bool HasRequiredItem(InventoryManager.AllItems itemRequired)
+    {
+        if (InventoryManager.instance.inventoryItems.Contains(itemRequired))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
