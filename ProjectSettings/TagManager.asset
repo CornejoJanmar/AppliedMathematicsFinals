@@ -7,6 +7,7 @@ TagManager:
   - Footstep/WOOD
   - Footstep/STONE
   - Footstep/TILE
+  - DoorFinal
   layers:
   - Default
   - TransparentFX
