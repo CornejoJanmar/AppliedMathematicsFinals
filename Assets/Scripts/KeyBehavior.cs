@@ -5,10 +5,16 @@ using UnityEngine;
 public class KeyBehavior : Interactable
 {
     [SerializeField] InventoryManager.AllItems itemType;
+    public Canvas InteractTextPrompt;
+
+    public void Start()
+    {
+        InteractTextPrompt.enabled = false;
+    }
 
     public override void OnFocus()
     {
-        
+        InteractTextPrompt.enabled = true;
     }
 
     public override void OnInteract()
@@ -19,6 +25,6 @@ public class KeyBehavior : Interactable
 
     public override void OnLoseFocus()
     {
-        
+        InteractTextPrompt.enabled = false;
     }
 }

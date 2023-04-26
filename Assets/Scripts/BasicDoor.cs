@@ -9,16 +9,17 @@ public class BasicDoor : Interactable
     [SerializeField] private GameObject UIpanel;
     private Animator anim;
     [SerializeField] InventoryManager.AllItems itemRequired;
-
+    public Canvas InteractTextPrompt;
 
     private void Start()
     {
         anim = GetComponent<Animator>();
+        InteractTextPrompt.enabled = false;
     }
 
     public override void OnFocus()
     {
-
+        InteractTextPrompt.enabled = true;
     }
 
     public override void OnInteract()
@@ -61,7 +62,7 @@ public class BasicDoor : Interactable
 
     public override void OnLoseFocus()
     {
-        
+        InteractTextPrompt.enabled = false;
     }
 
 
